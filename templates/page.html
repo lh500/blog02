@@ -1,0 +1,19 @@
+{% extends 'extend.html' %}
+{% block title %}{{ page.title }}-{{ commonData.configs.name }}{% endblock %}
+{% block banner %}{% endblock %}
+{% block category %}{% endblock %}
+{% block body %}
+    <div class="block custom-page">
+        <div class="block-main">
+            {{ page.content|safe }}
+        </div>
+    </div>
+    <script type="text/javascript">
+        window._PAGE_CONFIG = {
+            SID: '{{ sid }}',
+            TARGET_ID: '{{ page.id }}',
+            TYPE:2
+        }
+    </script>
+    {% include 'comment.html' %}
+{% endblock %}

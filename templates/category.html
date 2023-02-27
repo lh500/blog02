@@ -1,0 +1,72 @@
+{% extends 'extend.html' %}
+{% load common_tag %}
+{% block title %}{% if cdata %}{{ cdata.name }}-{{ commonData.configs.name }}{% else %}所有分类-
+    {{ commonData.configs.name }}{% endif %}{% endblock %}
+{% block body %}
+    <div class="block">
+        <div class="block-title no-border">
+         {% block category %}
+                <div class="categorys clearfix">
+
+                        {% if request.path == '/category' %}
+                            <a class="active" href="{% url 'category' %}">所有文章</a>
+                        {% else %}
+                            <a href="{% url 'category' %}">所有文章</a>
+                        {% endif %}
+                        {% for c in commonData.categorys %}
+                            {% if c.name == cdata.name %}
+                                <a  class="active" href="{% url 'category_alias' c.alias %}">{{ c.name }}</a>
+                            {% else %}
+                                <a href="{% url 'category_alias' c.alias %}">{{ c.name }}</a>
+                            {% endif %}
+                        {% endfor %}
+                </div>
+                {% endblock %}
+        </div>
+        <div class="block-main">
+            {% if not articles %}
+                <div class="center">该分类暂时没有文章</div>
+            {% endif %}
+            {% for i in articles %}
+                <div class="aritcle-item clearfix">
+
+                    {% if i.image %}
+                        <div class="col-md-8">
+                    {% else %}
+                        <div class="col-md-12">
+                    {% endif %}
+                        <div class="title-panel">
+                            <a href="/article/{{ i.sid }}" class="title"> {{ i.title }}</a>
+                        </div>
+
+                        <div class="info">
+                            <span class="date"><span
+                                    class="glyphicon glyphicon-calendar"></span>{{ i.createDate|date:"Y-m-d" }}</span>
+                            <span>
+                                <span class="glyphicon glyphicon-pencil"></span>
+                                <span>发表在 <a
+                                        href="{% url 'category_alias' i.category__alias %}">{{ i.category__name }}</a> </span>
+                            </span>
+                            <span class="hits">
+                            <span class="glyphicon glyphicon-eye-open"></span>
+                            <span>{{ i.hits }}</span>
+                        </span>
+                        </div>
+                    </div>
+                    {% if i.image %}
+                        <div class="col-md-4">
+                            <div class="cover">
+                                <img src="{{ i.image|url }}!600"/>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            {% get_pager as pager %}
+            {{ pager|safe }}
+        </div>
+
+    </div>
+
+{% endblock %}

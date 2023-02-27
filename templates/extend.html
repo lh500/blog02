@@ -1,0 +1,240 @@
+{% load common_tag %}
+{% loadData as commonData %}
+{% get_now as time %}
+{% load compress %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{{ commonData.configs.name }}-{{ commonData.configs.subject }}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta content="IE=edge,Chrome=1" http-equiv="X-UA-Compatible"/>
+    <meta content="webkit" name="renderer"/>
+    <link rel="dns-prefetch" href="https://www.88cto.com"/>
+    <link rel="shortcut icon" type="image/png" href="/static/favicon.ico"/>
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    {% compress css %}
+    <link href="/static/css/style.css" rel="stylesheet">
+    {% endcompress %}
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script async src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    {% block head %}
+    <meta name="keywords" content="{{ commonData.configs.keywords }}">
+    <meta name="description" content="{{ commonData.configs.description }}">
+    {% endblock %}
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-9423996531680870",
+            enable_page_level_ads: true
+        });
+    </script>
+</head>
+<body>
+{% if request.session.member %}
+<script type="text/javascript">
+    var MEMBER = {
+        name: '{{ request.session.member.name }}',
+        avatar: '{{ request.session.member.avatar }}',
+        url: '{{ request.session.member.url }}',
+        id: '{{ request.session.member.id }}'
+    };
+</script>
+{% endif %}
+<header>
+    <div class="top">
+        <div class="container">
+            <ul class="nav navbar-nav">
+                <a href="/" class="navbar-brand">
+                    <img class="logo" src="{% static 'images/logo.png' %}">
+                </a>
+                {% for menu in commonData.menus %}
+                <li><a class="af nav-af" href="{{ menu.href }}">
+                    <span class="{{ menu.icon }}"></span>
+                    <span>{{ menu.name }}</span>
+                </a></li>
+                {% endfor %}
+            </ul>
+            <ul class="nav navbar-right navbar-userinfo">
+                {% if request.session.member %}
+                <li><a href="{{ request.session.member.url }}" target="_blank">
+                    <img class="avatar-img" src="{{ request.session.member.avatar }}"/>
+                    <span>{{ request.session.member.name }}</span>
+                </a></li>
+                {% else %}
+                <li><a href="javascript:;" data-toggle="modal" data-target="#login_modal"><i
+                        class="glyphicon glyphicon-user"></i>登录</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+    {% block navbar %}
+
+    {% endblock %}
+</header>
+{% block banner %}
+{% endblock %}
+<div class="container content-wrap">
+    {% block main %}
+    <div class="row">
+        <div class="col-md-9">
+            {% block body %}{% endblock %}
+        </div>
+        <div class="col-md-3 notice-box">
+            <div class="block">
+                <div class="search-input">
+                    <form target="_blank" role="search" method="get" id="searchform"
+                          action="{% url 'haystack_search' %}">
+                        <div class="input-group">
+                            <input type="search" name="q" class="form-control" placeholder="搜索关键词"
+                                   aria-describedby="basic-addon1">
+                            <span class="input-group-addon" id="basic-addon1">
+                                  <i class="glyphicon glyphicon-search"></i>
+                              </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="block">
+                <div class="block-main">
+                    <a href="https://www.wezoz.com?source=88cto.com" target="_blank">
+                        <img src="{% static '/images/wenat_ad.gif' %}" width="100%">
+                    </a>
+                </div>
+            </div>
+            <div class="block">
+                <div class="block-title">推荐</div>
+                <div class="block-main recommeneds">
+
+                    {% for r in commonData.recommeneds %}
+                    <div class="item">
+                        <div class="img">
+                            <a href="{% url 'article' r.sid %}">
+                                <img src="{{ r.image|url }}!100"/>
+                            </a>
+                        </div>
+                        <div class="info">
+                            <a href="{% url 'article' r.sid %}">{{ r.title }}</a>
+                            <div class="info-bottom">
+                                        <span><a
+                                                href="{% url 'category_alias' r.category__alias %}">{{ r.category__name }}</a></span>
+                                <span>{{ r.createDate|date:"m-d" }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% endblock %}
+</div>
+
+<div class="container-fluid footer">
+    {% block footer %}
+    <div class="row footer-top">
+        <div class="col-md-4">
+            <h4><i class="glyphicon glyphicon-send"></i>{{ commonData.configs.name }}</h4>
+            <div>{{ commonData.configs.subject }}</div>
+            <div class="qrcode-box">
+                <div class="qrcode"></div>
+                <span>扫码二维码，手机上浏览</span>
+            </div>
+            <ul>
+                <li><a href="{% url 'sitemap' %}" target="_blank">网站地图</a></li>
+                <li><a href="https://github.com/newpanjing/myblog" target="_blank">源码地址</a></li>
+            </ul>
+        </div>
+        <div class="col-md-4">
+            <h4>分类目录</h4>
+            <ul class="float-list">
+                {% for c in commonData.categorys %}
+                {% if c.name == cdata.name %}
+                <li class="active"><a href="{% url 'category_alias' c.alias %}">{{ c.name }}</a></li>
+                {% else %}
+                <li><a href="{% url 'category_alias' c.alias %}">{{ c.name }}</a></li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-md-4">
+            <h4>友情链接</h4>
+            <ul class="float-list">
+                {% for item in commonData.sites %}
+                <li><a href="{{ item.site }}" target="_blank">{{ item.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="row footer-bottom">
+        <div>©2013-{{ time.year }} {{ commonData.configs.name }}版权所有 工信部ICP备案号：<a target="_blank"
+                                                                                  href="https://beian.miit.gov.cn/">{{
+            commonData.configs.icp }}</a>
+            联系我们：{{ commonData.configs.contact }}
+        </div>
+    </div>
+    {% endblock %}
+</div>
+{% if request.session.member is None %}
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="login_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">登录到{{ commonData.configs.name }}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="login-title">选取以下第三方OAuth平台登录</div>
+                <div class="login-btn-box">
+
+                    <a href="/oauth/qq/" title="使用QQ账号登录" class="login-btn">
+                        <svg width="50" height="50" viewBox="0 0 83 83">
+                            <path d="M41.5 0C18.58 0 .002 18.58.002 41.5S18.58 83 41.5 83c22.92 0 41.498-18.58 41.498-41.5S64.42 0 41.5 0zm22.848 54.434c-1.072 1-2.912-.09-4.68-2.537a26.78 26.78 0 0 1-2.93 5.7c2.501.893 4.109 2.286 4.109 3.858 0 2.716-4.806 4.913-10.736 4.913-3.52 0-6.628-.768-8.593-1.965-1.947 1.197-5.074 1.965-8.593 1.965-5.93 0-10.736-2.197-10.736-4.913 0-1.554 1.608-2.965 4.109-3.859a25.975 25.975 0 0 1-2.93-5.699c-1.768 2.43-3.608 3.538-4.68 2.537-1.465-1.375-.911-6.235 1.268-10.844.5-1.054 1.036-2 1.59-2.822.303-13.399 9.128-24.154 19.954-24.154h.036c10.825 0 19.65 10.737 19.954 24.154.554.821 1.09 1.768 1.59 2.822 2.161 4.61 2.733 9.469 1.268 10.844z"
+                                  fill="#2A9CD5" fill-rule="evenodd"></path>
+                        </svg>
+                        <div>QQ登录</div>
+                    </a>
+                    <a href="/oauth/github/" title="使用GitHub账号登录" class="login-btn">
+                        <svg width="50" height="50" viewBox="0 0 83 83">
+                            <path d="M0 42.556c0 18.805 11.894 34.738 28.383 40.37.26.055.482.074.704.074 1.538 0 2.13-1.13 2.13-2.112 0-1.019-.036-3.687-.055-7.244-1.556.352-2.946.5-4.187.5-7.985 0-9.8-6.206-9.8-6.206-1.89-4.91-4.614-6.225-4.614-6.225-3.612-2.539-.018-2.613.26-2.613 4.186.371 6.373 4.41 6.373 4.41 2.075 3.631 4.854 4.65 7.336 4.65 1.946 0 3.706-.63 4.743-1.112.37-2.742 1.445-4.613 2.631-5.687-9.208-1.075-18.897-4.725-18.897-21.028 0-4.65 1.612-8.449 4.26-11.412-.425-1.075-1.852-5.41.409-11.265 0 0 .296-.093.926-.093 1.5 0 4.89.575 10.486 4.465 3.316-.945 6.855-1.408 10.393-1.426 3.52.018 7.078.481 10.394 1.426 5.595-3.89 8.986-4.465 10.486-4.465.63 0 .926.093.926.093 2.26 5.854.834 10.19.408 11.265 2.65 2.982 4.261 6.78 4.261 11.412 0 16.34-9.708 19.935-18.953 20.99 1.482 1.316 2.816 3.91 2.816 7.875 0 5.687-.055 10.282-.055 11.671 0 1 .574 2.131 2.112 2.131.222 0 .482-.019.74-.074C71.125 77.294 83 61.342 83 42.556 83 19.064 64.418 0 41.5 0S0 19.064 0 42.556z"
+                                  fill="#0A0203" fill-rule="evenodd"></path>
+                        </svg>
+                        <div>GitHub登录</div>
+                    </a>
+
+                    <a href="/oauth/seejoke/" title="使用代码集市账号登录" class="login-btn">
+                        <img src="{% static 'images/seejoke.png' %}" width="50px" height="50px"/>
+                        <div>代码集市登录</div>
+                    </a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{#
+<script type="text/javascript">#
+}
+{
+    #var
+    ad_type = 'domain';
+    #
+}
+{
+    #</script>
+#}
+{#
+<script type="text/javascript" src="{% static 'js/ad.js' %}"></script>
+#}
+<script type="text/javascript" async src="https://hm.baidu.com/hm.js?55b6bb0a7aa928c0238ebc610c2c3673"></script>
+<script type="text/javascript" async src="https://zz.bdstatic.com/linksubmit/push.js"></script>
+<script type="text/javascript" async src="https://robot.ownthink.com/bot/js/robot.js?appid=xiaosi"></script>
+</body>
+</html>

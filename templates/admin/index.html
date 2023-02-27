@@ -1,0 +1,25 @@
+{% extends 'admin/index.html' %}
+{% load static %}
+{% block script %}
+    {{ block.super }}
+    <script type="text/javascript" async src="https://w.cnzz.com/c.php?id=1261750977&async=1"></script>
+
+{#    <script type="text/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"></script>#}
+{#    <script type="text/javascript">#}
+{#        var ad_type = 'admin';#}
+{#    </script>#}
+{##}
+{#    {% if request.user != 'panjing' %}#}
+{#    <script type="text/javascript" src="{% static 'js/ad.js' %}"></script>#}
+{#    {% endif %}#}
+
+{% endblock %}
+{% block head %}
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-9423996531680870",
+              enable_page_level_ads: true
+         });
+    </script>
+{% endblock %}
